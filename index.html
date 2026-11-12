@@ -171,43 +171,63 @@ function roadScene(){
  }
 }
 
+
 function drawCar(){
  let x=W/2+player*W*.24;
  let y=H*.78;
+
  ctx.save();
  ctx.translate(x,y);
 
- // Gölge
- ctx.fillStyle="#0009";
- ctx.beginPath();ctx.ellipse(0,24,70,18,0,0,Math.PI*2);ctx.fill();
+ // Viraj animasyonu
+ ctx.rotate(player * 0.12);
 
- // Araba gövdesi
- ctx.fillStyle="#c91424";
+ // Arabanın gölgesi
+ ctx.fillStyle="#0009";
  ctx.beginPath();
- ctx.moveTo(-48,15);ctx.lineTo(-40,-30);
- ctx.lineTo(-25,-53);ctx.lineTo(25,-53);
- ctx.lineTo(40,-30);ctx.lineTo(48,15);
- ctx.quadraticCurveTo(0,35,-48,15);
+ ctx.ellipse(0,25,75,18,0,0,Math.PI*2);
+ ctx.fill();
+
+ // GT-R gövdesi
+ ctx.fillStyle="#d20d20";
+ ctx.beginPath();
+ ctx.moveTo(-52,15);
+ ctx.lineTo(-45,-27);
+ ctx.lineTo(-30,-49);
+ ctx.lineTo(30,-49);
+ ctx.lineTo(45,-27);
+ ctx.lineTo(52,15);
+ ctx.quadraticCurveTo(0,36,-52,15);
  ctx.fill();
 
  // Cam
  ctx.fillStyle="#101c2d";
  ctx.beginPath();
- ctx.moveTo(-29,-30);ctx.lineTo(-19,-49);
- ctx.lineTo(19,-49);ctx.lineTo(29,-30);
+ ctx.moveTo(-31,-30);
+ ctx.lineTo(-21,-47);
+ ctx.lineTo(21,-47);
+ ctx.lineTo(31,-30);
  ctx.fill();
 
- // Farlar
- ctx.fillStyle="#fff4d2";
- ctx.shadowColor="#ff3344";ctx.shadowBlur=20;
- ctx.fillRect(-43,-5,13,7);
- ctx.fillRect(30,-5,13,7);
+ // Arka farlar
+ ctx.shadowColor="#ff172c";
+ ctx.shadowBlur=25;
+ ctx.fillStyle="#ff253c";
+ ctx.fillRect(-44,-5,13,8);
+ ctx.fillRect(31,-5,13,8);
  ctx.shadowBlur=0;
 
  // Tekerlekler
  ctx.fillStyle="#080808";
- ctx.fillRect(-49,-10,10,28);
- ctx.fillRect(39,-10,10,28);
+ ctx.fillRect(-53,-12,11,29);
+ ctx.fillRect(42,-12,11,29);
+
+ // GT-R yazısı
+ ctx.fillStyle="white";
+ ctx.font="bold 10px Arial";
+ ctx.textAlign="center";
+ ctx.fillText("GT-R",0,10);
+
  ctx.restore();
 }
 
