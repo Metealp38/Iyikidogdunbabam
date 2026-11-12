@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Behçet Bulut | GT-R Adventure</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#08090e;color:white;
+ font-family:Arial,sans-serif;overflow:hidden
+}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.screen{
+ position:fixed;inset:0;display:flex;
+ flex-direction:column;align-items:center;
+ justify-content:center;text-align:center;
+ padding:22px;background:linear-gradient(180deg,#08091099,#080910dd);
+}
+h1{font-size:clamp(30px,7vw,65px);margin:10px 0;
+ color:#ff343b;text-shadow:0 0 25px #ff2020}
+h2{letter-spacing:4px;font-size:14px;color:#aaa}
+p{color:#ccc;line-height:1.7}
+button{
+ background:#d71925;color:white;border:1px solid #ff5555;
+ padding:15px 27px;border-radius:9px;
+ font-size:16px;font-weight:bold;cursor:pointer;margin:8px
+}
+button:active{transform:scale(.96)}
+#game{display:none}
+#hud{
+ position:fixed;top:18px;left:0;right:0;
+ display:flex;justify-content:space-around;
+ font-weight:bold;text-shadow:0 2px 8px black;
+ pointer-events:none
+}
+#controls{
+ position:fixed;bottom:22px;left:0;right:0;
+ display:flex;justify-content:space-between;padding:0 25px
+}
+#controls button{width:75px;height:65px;font-size:25px;
+ background:#222b;border-color:#ffffff55}
+#final{display:none}
+.small{font-size:12px;color:#888}
+</style>
+</head>
+<body>
+
+<canvas id="road"></canvas>
+
+<div class="screen" id="intro">
+ <h2>DOBANGO STUDIOS PRESENTS</h2>
+ <h1>BEHÇET BULUT</h1>
+ <h2>THE GT-R ADVENTURE</h2>
+ <p>Bir efsanenin yolculuğu başlıyor.<br>
+ Gece şehri seni bekliyor.</p>
+ <button onclick="startGame()">MACERAYA BAŞLA</button>
+ <div class="small">Aile için özel olarak hazırlanmıştır ❤️</div>
+</div>
+
+<div id="game">
+ <div id="hud">
+  <span>🏁 GÖREV: <b id="score">0</b>/5</span>
+  <span>⚡ <b id="speed">0</b> KM/H</span>
+ </div>
+ <div id="controls">
+  <button id="left">◀</button>
+  <button id="right">▶</button>
+ </div>
+</div>
+
+<div class="screen" id="final">
+ <h2>MISSION COMPLETED</h2>
+ <h1>İYİ Kİ DOĞDUN!</h1>
+ <p>Sevgili babacığım,<br>
+ Bu küçük macerayı senin için hazırladım.<br>
+ İyi ki varsın. Seni çok seviyorum! ❤️</p>
+ <h2>BEHÇET BULUT</h2>
+ <button onclick="location.reload()">YENİDEN OYNA</button>
+</div>
+
+<script>
+const canvas=document.getElementById("road");
+const ctx=canvas.getContext("2d");
+let W,H,player=0,score=0,objects=[],running=false;
+let keys={left:false,right:false},frame=0;
+
+function resize(){
+ W=canvas.width=innerWidth;
+ H=canvas.height=innerHeight;
+}
+addEventListener("resize",resize);
+resize();
+
+function startGame(){
+ document.getElementById("intro").style.display="none";
+ document.getElementById("game").style.display="block";
+ score=0;player=0;frame=0;objects=[];
+ running=true;
+ requestAnimationFrame(loop);
+}
+
+function roadScene(){
+ let sky=ctx.createLinearGradient(0,0,0,H);
+ sky.addColorStop(0,"#080b1b");
+ sky.addColorStop(.6,"#27203a");
+ sky.addColorStop(1,"#090a10");
+ ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+
+ // Yıldızlar
+ for(let i=0;i<65;i++){
+  let x=(i*137)%W;
+  let y=(i*71)%(H*.45);
+  ctx.fillStyle="#ffffff88";
+  ctx.fillRect(x,y,2,2);
+ }
+
+ // Şehir binaları
+ for(let i=0;i<18;i++){
+  let x=i*W/18;
+  let bh=70+(i*43%140);
+  ctx.fillStyle=i%2?"#111725":"#171a2c";
+  ctx.fillRect(x,H*.53-bh,W/18-3,bh);
+  for(let j=0;j<3;j++){
+   ctx.fillStyle="#ffc95c77";
+   ctx.fillRect(x+8+j*12,H*.53-bh+15,4,7);
+  }
+ }
+
+ // Perspektif yol
+ let horizon=H*.53;
+ ctx.fillStyle="#20232a";
+ ctx.beginPath();
+ ctx.moveTo(W*.43,horizon);
+ ctx.lineTo(W*.57,horizon);
+ ctx.lineTo(W*1.05,H);
+ ctx.lineTo(-W*.05,H);
+ ctx.fill();
+
+ // Yol kenarları
+ ctx.strokeStyle="#e8e8e8";
+ ctx.lineWidth=3;
+ ctx.beginPath();
+ ctx.moveTo(W*.43,horizon);
+ ctx.lineTo(-W*.05,H);
+ ctx.moveTo(W*.57,horizon);
+ ctx.lineTo(W*1.05,H);
+ ctx.stroke();
+
+ // Şerit çizgileri
+ for(let i=0;i<9;i++){
+  let t=((i/9+frame*.008)%1);
+  let y=horizon+t*t*(H-horizon);
+  let width=2+t*5;
+  let x=W/2;
+  ctx.fillStyle="#f8d77b";
+  ctx.fillRect(x-width/2,y,width,10+t*28);
+ }
+}
+
+function drawCar(){
+ let x=W/2+player*W*.24;
+ let y=H*.78;
+ ctx.save();
+ ctx.translate(x,y);
+
+ // Gölge
+ ctx.fillStyle="#0009";
+ ctx.beginPath();ctx.ellipse(0,24,70,18,0,0,Math.PI*2);ctx.fill();
+
+ // Araba gövdesi
+ ctx.fillStyle="#c91424";
+ ctx.beginPath();
+ ctx.moveTo(-48,15);ctx.lineTo(-40,-30);
+ ctx.lineTo(-25,-53);ctx.lineTo(25,-53);
+ ctx.lineTo(40,-30);ctx.lineTo(48,15);
+ ctx.quadraticCurveTo(0,35,-48,15);
+ ctx.fill();
+
+ // Cam
+ ctx.fillStyle="#101c2d";
+ ctx.beginPath();
+ ctx.moveTo(-29,-30);ctx.lineTo(-19,-49);
+ ctx.lineTo(19,-49);ctx.lineTo(29,-30);
+ ctx.fill();
+
+ // Farlar
+ ctx.fillStyle="#fff4d2";
+ ctx.shadowColor="#ff3344";ctx.shadowBlur=20;
+ ctx.fillRect(-43,-5,13,7);
+ ctx.fillRect(30,-5,13,7);
+ ctx.shadowBlur=0;
+
+ // Tekerlekler
+ ctx.fillStyle="#080808";
+ ctx.fillRect(-49,-10,10,28);
+ ctx.fillRect(39,-10,10,28);
+ ctx.restore();
+}
+
+function addObject(){
+ let lane=Math.random()*1.5-0.75;
+ objects.push({x:lane,y:H*.53,size:12,type:"star"});
+}
+
+function drawObjects(){
+ objects.forEach(o=>{
+  o.y+=4+frame*.002;
+  let t=(o.y-H*.53)/(H*.47);
+  let x=W/2+o.x*W*.24*t;
+  ctx.font=`${18+t*25}px Arial`;
+  ctx.textAlign="center";
+  ctx.fillText("⭐",x,o.y);
+ });
+ objects=objects.filter(o=>o.y<H+30);
+}
+
+function checkCollision(){
+ objects=objects.filter(o=>{
+  let t=(o.y-H*.53)/(H*.47);
+  let x=W/2+o.x*W*.24*t;
+  let carX=W/2+player*W*.24;
+  if(o.y>H*.74&&o.y<H*.85&&Math.abs(x-carX)<55){
+   score++;
+   document.getElementById("score").textContent=score;
+   if(score>=5){
+    running=false;
+    document.getElementById("game").style.display="none";
+    document.getElementById("final").style.display="flex";
+   }
+   return false;
+  }
+  return true;
+ });
+}
+
+function loop(){
+ if(!running)return;
+ frame++;
+ if(keys.left)player=Math.max(-1,player-.035);
+ if(keys.right)player=Math.min(1,player+.035);
+ roadScene();
+ if(frame%65===0)addObject();
+ drawObjects();
+ drawCar();
+ checkCollision();
+ document.getElementById("speed").textContent=
+ Math.min(320,120+Math.floor(Math.sin(frame/15)*20));
+ requestAnimationFrame(loop);
+}
+
+function control(id,key){
+ const el=document.getElementById(id);
+ el.addEventListener("pointerdown",e=>{
+  e.preventDefault();keys[key]=true;
+ });
+ ["pointerup","pointerleave","pointercancel"].forEach(ev=>
+  el.addEventListener(ev,()=>keys[key]=false)
+ );
+}
+control("left","left");
+control("right","right");
+
+addEventListener("keydown",e=>{
+ if(e.key==="ArrowLeft"||e.key==="a")keys.left=true;
+ if(e.key==="ArrowRight"||e.key==="d")keys.right=true;
+});
+addEventListener("keyup",e=>{
+ if(e.key==="ArrowLeft"||e.key==="a")keys.left=false;
+ if(e.key==="ArrowRight"||e.key==="d")keys.right=false;
+});
+</script>
+</body>
+</html>
