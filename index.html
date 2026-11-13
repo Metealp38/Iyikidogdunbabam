@@ -39,8 +39,32 @@ button:active{transform:scale(.96)}
  position:fixed;bottom:22px;left:0;right:0;
  display:flex;justify-content:space-between;padding:0 25px
 }
-#controls button{width:75px;height:65px;font-size:25px;
- background:#222b;border-color:#ffffff55}
+#controls{
+ position:fixed;
+ bottom:15px;
+ left:0;
+ right:0;
+ display:flex;
+ justify-content:center;
+}
+
+#steering{
+ width:115px;
+ height:115px;
+ border:9px solid #aaa;
+ border-radius:50%;
+ background:radial-gradient(circle,#333,#080808);
+ box-shadow:0 0 22px #e21b35;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ touch-action:none;
+}
+
+#wheel{
+ font-size:65px;
+ color:white;
+}
 #final{display:none}
 .small{font-size:12px;color:#888}
  .car-photo{
