@@ -311,17 +311,38 @@ function loop(){
  requestAnimationFrame(loop);
 }
 
-function control(id,key){
- const el=document.getElementById(id);
- el.addEventListener("pointerdown",e=>{
-  e.preventDefault();keys[key]=true;
- });
- ["pointerup","pointerleave","pointercancel"].forEach(ev=>
-  el.addEventListener(ev,()=>keys[key]=false)
- );
-}
-control("left","left");
-control("right","right");
+
+const steering = document.getElementById("steering");
+const wheel = document.getElementById("wheel");
+
+let steeringActive = false;
+let lastX = 0;
+
+steering.addEventListener("pointerdown", e => {
+ steeringActive = true;
+ lastX = e.clientX;
+ steering.setPointerCapture(e.pointerId);
+});
+
+steering.addEventListener("pointermove", e => {
+ if(!steeringActive) return;
+
+ let diff = e.clientX - lastX;
+ player += diff / 180;
+ player = Math.max(-1, Math.min(1, player));
+ lastX = e.clientX;
+
+ wheel.style.transform =
+ `rotate(${player * 100}deg)`;
+});
+
+steering.addEventListener("pointerup", () => {
+ steeringActive = false;
+});
+
+steering.addEventListener("pointercancel", () => {
+ steeringActive = false;
+});
 
 addEventListener("keydown",e=>{
  if(e.key==="ArrowLeft"||e.key==="a")keys.left=true;
