@@ -209,7 +209,7 @@ function drawCar(){
  ctx.translate(x,y);
  ctx.rotate(player * 0.12);
 
- // Arabanın yere düşen gölgesi
+ // Gölge
  ctx.fillStyle="#0009";
  ctx.beginPath();
  ctx.ellipse(0,24,78,20,0,0,Math.PI*2);
@@ -217,98 +217,79 @@ function drawCar(){
 
  // Lastikler
  ctx.fillStyle="#080808";
- ctx.fillRect(-58,-32,15,34);
- ctx.fillRect(43,-32,15,34);
- ctx.fillRect(-58,8,15,29);
- ctx.fillRect(43,8,15,29);
+ ctx.fillRect(-57,-30,14,35);
+ ctx.fillRect(43,-30,14,35);
+ ctx.fillRect(-57,10,14,30);
+ ctx.fillRect(43,10,14,30);
 
- // Ana gövde
- let body = ctx.createLinearGradient(-55,0,55,0);
+ // Gövde
+ let body=ctx.createLinearGradient(-55,0,55,0);
  body.addColorStop(0,"#76000d");
- body.addColorStop(.35,"#ed172d");
- body.addColorStop(.7,"#c9001c");
- body.addColorStop(1,"#65000b");
+ body.addColorStop(.4,"#ed172d");
+ body.addColorStop(1,"#76000d");
 
  ctx.fillStyle=body;
  ctx.beginPath();
- ctx.moveTo(-48,28);
- ctx.lineTo(-55,8);
- ctx.lineTo(-48,-34);
- ctx.lineTo(-35,-53);
- ctx.lineTo(35,-53);
- ctx.lineTo(48,-34);
- ctx.lineTo(55,8);
- ctx.lineTo(48,28);
- ctx.quadraticCurveTo(0,39,-48,28);
+ ctx.moveTo(-35,-55);
+ ctx.lineTo(35,-55);
+ ctx.lineTo(50,-30);
+ ctx.lineTo(55,15);
+ ctx.lineTo(45,32);
+ ctx.quadraticCurveTo(0,42,-45,32);
+ ctx.lineTo(-55,15);
+ ctx.lineTo(-50,-30);
+ ctx.closePath();
  ctx.fill();
 
- // Kaput çizgileri
- ctx.strokeStyle="#ff6673";
- ctx.lineWidth=2;
+ // Ön kaput
+ ctx.fillStyle="#c9001c";
+ ctx.fillRect(-30,-43,60,20);
+
+ // Ön cam
+ ctx.fillStyle="#152b40";
  ctx.beginPath();
- ctx.moveTo(-30,-30);
- ctx.lineTo(-23,5);
- ctx.moveTo(30,-30);
- ctx.lineTo(23,5);
- ctx.stroke();
+ ctx.moveTo(-30,-18);
+ ctx.lineTo(-23,-35);
+ ctx.lineTo(23,-35);
+ ctx.lineTo(30,-18);
+ ctx.closePath();
+ ctx.fill();
 
  // Arka cam
  ctx.fillStyle="#101c2d";
  ctx.beginPath();
- ctx.moveTo(-32,-30);
- ctx.lineTo(-22,-48);
- ctx.lineTo(22,-48);
- ctx.lineTo(32,-30);
+ ctx.moveTo(-27,7);
+ ctx.lineTo(27,7);
+ ctx.lineTo(22,24);
+ ctx.lineTo(-22,24);
  ctx.closePath();
  ctx.fill();
 
- // Ön cam
- ctx.fillStyle="#182b40";
- ctx.beginPath();
- ctx.moveTo(-30,10);
- ctx.lineTo(-24,27);
- ctx.lineTo(24,27);
- ctx.lineTo(30,10);
- ctx.closePath();
- ctx.fill();
-
- // Cam yansımaları
- ctx.strokeStyle="#8db8d8";
- ctx.lineWidth=2;
- ctx.beginPath();
- ctx.moveTo(-18,-44);
- ctx.lineTo(-25,-32);
- ctx.moveTo(18,-44);
- ctx.lineTo(25,-32);
- ctx.stroke();
-
- // Kırmızı arka farlar
- ctx.shadowColor="#ff1028";
- ctx.shadowBlur=22;
- ctx.fillStyle="#ff253c";
- ctx.fillRect(-45,-5,13,8);
- ctx.fillRect(32,-5,13,8);
+ // Ön beyaz farlar
+ ctx.shadowColor="#ffffff";
+ ctx.shadowBlur=18;
+ ctx.fillStyle="#ffffff";
+ ctx.fillRect(-43,-49,13,7);
+ ctx.fillRect(30,-49,13,7);
  ctx.shadowBlur=0;
 
- // Plaka
- ctx.fillStyle="#eeeeee";
- ctx.fillRect(-17,27,34,6);
- ctx.fillStyle="#111";
- ctx.font="bold 5px Arial";
- ctx.textAlign="center";
- ctx.fillText("NISSAN",0,32);
+ // Arka kırmızı stoplar
+ ctx.shadowColor="#ff1028";
+ ctx.shadowBlur=20;
+ ctx.fillStyle="#ff172c";
+ ctx.fillRect(-43,27,13,7);
+ ctx.fillRect(30,27,13,7);
+ ctx.shadowBlur=0;
+
+ // Arka spoyler
+ ctx.fillStyle="#151515";
+ ctx.fillRect(-45,37,90,5);
 
  // GT-R logosu
  ctx.fillStyle="white";
  ctx.font="bold 11px Arial";
  ctx.textAlign="center";
- ctx.fillText("GT-R",0,-8);
-
- // Arka spoyler
- ctx.fillStyle="#171717";
- ctx.fillRect(-43,-53,86,5);
- ctx.fillRect(-38,-57,7,7);
- ctx.fillRect(31,-57,7,7);
+ ctx.fillText("GT-R",0,3);
 
  ctx.restore();
 }
